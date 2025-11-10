@@ -5,35 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Malawi Tripartite Elections - Online Voting System</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="mobile-improvements.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="container">
+        <div class="header-container">
             <div class="logo">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Flag_of_Malawi.svg" alt="Malawi Flag" class="flag">
-                <h1>Malawi Tripartite Elections</h1>
+                <h1>Malawi Elections</h1>
             </div>
-            <nav class="nav">
-                <button id="homeBtn" class="nav-btn active">Home</button>
-                <button id="voteBtn" class="nav-btn">Vote</button>
-                <button id="resultsBtn" class="nav-btn">Results</button>
-                <button id="adminBtn" class="nav-btn" style="display: none;">Admin</button>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Navigation -->
+            <nav class="nav" id="mainNav">
+                <button id="homeBtn" class="nav-btn active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </button>
+                <button id="voteBtn" class="nav-btn">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>Vote</span>
+                </button>
+                <button id="resultsBtn" class="nav-btn">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Results</span>
+                </button>
+                <button id="adminBtn" class="nav-btn" style="display: none;">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </button>
             </nav>
+
+            <!-- User Section -->
             <div class="user-section">
                 <div id="userInfo" class="user-info" style="display: none;">
-                    <span id="userName"></span>
-                    <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                    <span id="userName" class="user-name"></span>
+                    <button id="logoutBtn" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
                 <div id="adminInfo" class="admin-info" style="display: none;">
-                    <span id="adminName"></span>
-                    <button id="adminLogoutBtn" class="btn btn-danger">Admin Logout</button>
+                    <span id="adminName" class="user-name"></span>
+                    <button id="adminLogoutBtn" class="btn btn-danger btn-sm">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
-                <div id="loginButtonContainer">
-                    <button id="loginBtn" class="btn btn-primary">Login to Vote</button>
-                    <button id="adminLoginBtn" class="btn btn-secondary">Admin Login</button>
+                <div id="loginButtonContainer" class="login-buttons">
+                    <button id="loginBtn" class="btn btn-primary btn-sm">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </button>
+                    <button id="adminLoginBtn" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -532,6 +568,41 @@
         </div>
     </div>
 
+    <script>
+        // Mobile Menu Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mainNav = document.getElementById('mainNav');
+            
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    mainNav.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
+                });
+
+                // Close menu when clicking nav buttons
+                const navButtons = document.querySelectorAll('.nav-btn');
+                navButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        mobileMenuToggle.classList.remove('active');
+                        mainNav.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                    });
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    const isClickInside = mainNav.contains(event.target) || mobileMenuToggle.contains(event.target);
+                    if (!isClickInside && mainNav.classList.contains('active')) {
+                        mobileMenuToggle.classList.remove('active');
+                        mainNav.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                    }
+                });
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

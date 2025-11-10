@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-mobile.css">
     <style>
         /* Layout */
         .admin-layout {
@@ -560,9 +561,14 @@
     </style>
 </head>
 <body>
+    <!-- Mobile Sidebar Toggle -->
+    <button class="admin-sidebar-toggle" id="adminSidebarToggle" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <div class="admin-layout">
         <!-- Sidebar -->
-        <nav class="admin-sidebar">
+        <nav class="admin-sidebar" id="adminSidebar">
             <div class="sidebar-header">
                 <div class="sidebar-brand">
                     <img src="/Malawi/Flag-Malawi.webp" alt="Malawi Flag">
@@ -1536,6 +1542,50 @@
     <!-- Modals will be added here -->
     <div id="modalContainer"></div>
 
+    <script>
+        // Admin Sidebar Toggle for Mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('adminSidebarToggle');
+            const sidebar = document.getElementById('adminSidebar');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    document.body.classList.toggle('admin-menu-open');
+                });
+
+                // Close sidebar when clicking nav items on mobile
+                const navItems = sidebar.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        if (window.innerWidth <= 968) {
+                            sidebar.classList.remove('active');
+                            document.body.classList.remove('admin-menu-open');
+                        }
+                    });
+                });
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth <= 968) {
+                        const isClickInside = sidebar.contains(event.target) || sidebarToggle.contains(event.target);
+                        if (!isClickInside && sidebar.classList.contains('active')) {
+                            sidebar.classList.remove('active');
+                            document.body.classList.remove('admin-menu-open');
+                        }
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 968) {
+                        sidebar.classList.remove('active');
+                        document.body.classList.remove('admin-menu-open');
+                    }
+                });
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/enhanced-admin-clean.js"></script>
 </body>

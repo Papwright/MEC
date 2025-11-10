@@ -1,0 +1,410 @@
+/* ===================================
+   ADMIN PANEL MOBILE IMPROVEMENTS
+   =================================== */
+
+/* Mobile Sidebar Toggle */
+.admin-sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1002;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.admin-sidebar-toggle i {
+    font-size: 1.25rem;
+}
+
+/* Mobile Responsive Admin Layout */
+@media (max-width: 968px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1001;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+    }
+    
+    .admin-sidebar.active {
+        left: 0;
+    }
+    
+    .admin-sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .admin-content {
+        padding: 1rem;
+        padding-top: 4rem;
+    }
+    
+    /* Overlay when menu is open */
+    body.admin-menu-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+    
+    body.admin-menu-open {
+        overflow: hidden;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 969px) and (max-width: 1200px) {
+    .admin-layout {
+        grid-template-columns: 240px 1fr;
+    }
+    
+    .admin-content {
+        padding: 1.5rem;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .admin-sidebar {
+        width: 260px;
+        left: -260px;
+    }
+    
+    .admin-content {
+        padding: 0.75rem;
+        padding-top: 3.5rem;
+    }
+    
+    .sidebar-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .sidebar-brand h1 {
+        font-size: 1.25rem;
+    }
+    
+    .sidebar-brand img {
+        width: 40px;
+        height: 26px;
+    }
+    
+    .nav-item {
+        padding: 0.875rem 1rem;
+        font-size: 0.9375rem;
+    }
+}
+
+/* Responsive Tables for Admin */
+@media (max-width: 968px) {
+    .data-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+    
+    .data-table {
+        min-width: 600px;
+        font-size: 0.875rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 0.75rem 0.5rem;
+        white-space: nowrap;
+    }
+    
+    /* Stack form elements on mobile */
+    .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .data-table {
+        font-size: 0.8125rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 0.625rem 0.4rem;
+    }
+    
+    /* Hide less important columns on small screens */
+    .data-table th.hide-mobile,
+    .data-table td.hide-mobile {
+        display: none;
+    }
+}
+
+/* Responsive Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 480px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+/* Responsive Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
+
+/* Better modal on mobile */
+@media (max-width: 640px) {
+    .modal-content {
+        width: calc(100% - 2rem);
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem;
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+    }
+}
+
+/* Responsive Charts */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 1rem 0;
+}
+
+@media (max-width: 640px) {
+    .chart-container {
+        height: 250px;
+    }
+}
+
+@media (min-width: 768px) {
+    .chart-container {
+        height: 350px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .chart-container {
+        height: 400px;
+    }
+}
+
+/* Page Header Improvements */
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .page-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .page-header p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Search and Filter Improvements */
+.search-filter-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .search-filter-container {
+        flex-direction: column;
+    }
+    
+    .search-filter-container input,
+    .search-filter-container select {
+        width: 100%;
+    }
+}
+
+/* Pagination Improvements */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 480px) {
+    .pagination {
+        gap: 0.25rem;
+    }
+    
+    .pagination .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Toast Notifications - Mobile Optimized */
+.toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    max-width: calc(100vw - 2rem);
+    z-index: 10000;
+}
+
+@media (min-width: 640px) {
+    .toast {
+        max-width: 400px;
+    }
+}
+
+/* Loading Spinner */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Touch-friendly elements */
+@media (hover: none) and (pointer: coarse) {
+    .nav-item,
+    .btn,
+    .data-table button {
+        min-height: 44px;
+    }
+    
+    .admin-sidebar-toggle {
+        min-width: 48px;
+        min-height: 48px;
+    }
+}
+
+/* Improved scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Better focus states for accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+a:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Print styles for admin reports */
+@media print {
+    .admin-sidebar,
+    .admin-sidebar-toggle,
+    .action-buttons,
+    .pagination,
+    .search-filter-container {
+        display: none !important;
+    }
+    
+    .admin-layout {
+        display: block;
+    }
+    
+    .admin-content {
+        padding: 0;
+    }
+    
+    .data-table {
+        font-size: 10pt;
+    }
+}
