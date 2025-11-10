@@ -10,11 +10,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "build": "npm run build:frontend",
-    "build:frontend": "webpack --mode production",
-    "migrate": "node scripts/migrate.js",
-    "seed": "node scripts/seed.js"
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "cors": "^2.8.5",
