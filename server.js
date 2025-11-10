@@ -5,7 +5,10 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const session = require('express-session');
-require('dotenv').config({ path: './config.env' });
+// Only load .env file in development, Railway provides env vars directly
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config({ path: './config.env' });
+}
 
 // Import database
 const db = require('./src/config/database');
