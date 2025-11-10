@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malawi Tripartite Elections - Online Voting System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Flag_of_Malawi.svg" alt="Malawi Flag" class="flag">
+                <h1>Malawi Tripartite Elections</h1>
+            </div>
+            <nav class="nav">
+                <button id="homeBtn" class="nav-btn active">Home</button>
+                <button id="voteBtn" class="nav-btn">Vote</button>
+                <button id="resultsBtn" class="nav-btn">Results</button>
+                <button id="adminBtn" class="nav-btn" style="display: none;">Admin</button>
+            </nav>
+            <div class="user-section">
+                <div id="userInfo" class="user-info" style="display: none;">
+                    <span id="userName"></span>
+                    <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+                </div>
+                <div id="adminInfo" class="admin-info" style="display: none;">
+                    <span id="adminName"></span>
+                    <button id="adminLogoutBtn" class="btn btn-danger">Admin Logout</button>
+                </div>
+                <div id="loginButtonContainer">
+                    <button id="loginBtn" class="btn btn-primary">Login to Vote</button>
+                    <button id="adminLoginBtn" class="btn btn-secondary">Admin Login</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Section -->
+        <section id="homeSection" class="section active">
+            <div class="container">
+                <div class="hero">
+                    <h2>Welcome to Malawi's Online Voting System</h2>
+                    <p>Exercise your democratic right to vote for President, Member of Parliament, and Councillor</p>
+                    <div class="hero-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <h3 id="totalVoters">-</h3>
+                            <p>Registered Voters</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-vote-yea"></i>
+                            <h3 id="totalVotes">-</h3>
+                            <p>Votes Cast</p>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-percentage"></i>
+                            <h3 id="turnout">-</h3>
+                            <p>Turnout</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-cards">
+                    <div class="info-card">
+                        <i class="fas fa-user-tie"></i>
+                        <h3>President</h3>
+                        <p>Vote for the President of the Republic of Malawi</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-building"></i>
+                        <h3>Member of Parliament</h3>
+                        <p>Vote for your constituency's Member of Parliament</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>Councillor</h3>
+                        <p>Vote for your local ward councillor</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Section -->
+        <section id="loginSection" class="section">
+            <div class="container">
+                <div class="auth-container">
+                    <div class="auth-card">
+                        <h2>Voter Login</h2>
+                        <div class="login-info">
+                            <p><i class="fas fa-info-circle"></i> Please login using your <strong>VoterID</strong> (e.g., VID000) and the password you created during registration.</p>
+                        </div>
+                        <form id="loginForm" class="auth-form">
+                            <div class="form-group">
+                                <label for="nationalId">VoterID</label>
+                                <input type="text" id="nationalId" name="nationalId" placeholder="Enter your VoterID (e.g., VID000)" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div class="password-input-container">
+                                    <input type="password" id="password" name="password" required>
+                                    <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('password')"></i>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">Login</button>
+                        </form>
+                        <div class="forgot-voterid">
+                            <a href="#" onclick="showVoterIDLookup()">Forgot VoterID or Password?</a>
+                        </div>
+                        <div class="auth-footer">
+                            <p>Don't have an account? <button id="showRegisterBtn" class="link-btn">Register here</button></p>
+                        </div>
+                    </div>
+
+                    <div class="auth-card" id="registerCard" style="display: none;">
+                        <h2>Voter Registration</h2>
+                        <form id="registerForm" class="auth-form">
+                            <div class="form-group">
+                                <label for="regNationalId">National ID</label>
+                                <input type="text" id="regNationalId" name="nationalId" required placeholder="Enter your National ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="regPassword">Password</label>
+                                <div class="password-input-container">
+                                    <input type="password" id="regPassword" name="password" required placeholder="Create a password">
+                                    <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('regPassword')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="regConfirmPassword">Confirm Password</label>
+                                <div class="password-input-container">
+                                    <input type="password" id="regConfirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                                    <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('regConfirmPassword')"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="regDistrict">District</label>
+                                <select id="regDistrict" name="district" required>
+                                    <option value="">Select District</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="regConstituency">Constituency</label>
+                                <select id="regConstituency" name="constituency" required disabled>
+                                    <option value="">Select Constituency</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="regStation">Polling Station</label>
+                                <select id="regStation" name="station" required disabled>
+                                    <option value="">Select Polling Station</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">Register</button>
+                        </form>
+                        <div class="auth-footer">
+                            <p>Already have an account? <button id="showLoginBtn" class="link-btn">Login here</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Voting Section -->
+        <section id="votingSection" class="section" style="display: none;">
+            <div class="container">
+                <div class="voting-header">
+                    <h2>Cast Your Vote</h2>
+                    <p>Welcome, <span id="voterNameDisplay"></span></p>
+                    <div class="voting-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span id="progressText"></span>
+                    </div>
+                </div>
+
+                <div class="positions-container" id="positionsContainer">
+                    <!-- Positions will be loaded here -->
+                </div>
+
+                <div class="voting-complete" id="votingComplete" style="display: none;">
+                    <div class="complete-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Voting Complete!</h3>
+                        <p>Thank you for participating in Malawi's democratic process.</p>
+                        <button id="viewHistoryBtn" class="btn btn-primary">View Voting History</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="section">
+            <div class="container">
+                <h2>Election Results</h2>
+                
+                <div class="results-controls">
+                    <button id="liveResultsBtn" class="btn btn-primary active">Live Results</button>
+                    <button id="nationalSummaryBtn" class="btn btn-secondary">National Summary</button>
+                    <button id="winnersBtn" class="btn btn-secondary">Winners</button>
+                </div>
+
+                <div class="results-container" id="resultsContainer">
+                    <!-- Results will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Section -->
+        <section id="adminSection" class="section">
+            <div class="container">
+                <div class="admin-header">
+                    <div class="admin-header-content">
+                        <h2><i class="fas fa-shield-alt"></i> Administrative Panel</h2>
+                        <p>Manage elections, voters, candidates, and view real-time statistics</p>
+                    </div>
+                    <div class="admin-status">
+                        <span class="status-badge">
+                            <i class="fas fa-circle"></i> Admin Mode Active
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="admin-controls">
+                    <button id="statsBtn" class="btn btn-primary active">
+                        <i class="fas fa-chart-bar"></i> Statistics
+                    </button>
+                    <button id="candidatesBtn" class="btn btn-secondary">
+                        <i class="fas fa-user-tie"></i> Manage Candidates
+                    </button>
+                    <button id="stationsBtn" class="btn btn-secondary">
+                        <i class="fas fa-map-marker-alt"></i> Polling Stations
+                    </button>
+                    <button id="votersBtn" class="btn btn-secondary">
+                        <i class="fas fa-users"></i> Manage Voters
+                    </button>
+                </div>
+
+                <div class="admin-container" id="adminContainer">
+                    <!-- Admin content will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Malawi Electoral Commission. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modal for candidate selection -->
+    <div id="candidateModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="modalTitle">Select Candidate</h3>
+            <div id="modalCandidates">
+                <!-- Candidates will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for voter management -->
+    <div id="voterModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="voterModalTitle">Voter Details</h3>
+            <form id="voterForm" class="voter-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editNationalId">National ID</label>
+                        <input type="text" id="editNationalId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="editVoterStationId">Polling Station</label>
+                        <select id="editVoterStationId" required>
+                            <option value="">Select Station</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editFName">First Name</label>
+                        <input type="text" id="editFName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editSName">Surname</label>
+                        <input type="text" id="editSName" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editDateOfBirth">Date of Birth</label>
+                        <input type="date" id="editDateOfBirth" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editGender">Gender</label>
+                        <select id="editGender" required>
+                            <option value="">Select Gender</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editAddress">Address</label>
+                    <textarea id="editAddress" rows="3" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update Voter</button>
+                    <button type="button" id="deleteVoterBtn" class="btn btn-danger">Delete Voter</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeVoterModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for polling station management -->
+    <div id="stationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="stationModalTitle">Add New Polling Station</h3>
+            <form id="stationForm" class="station-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="addStationId">Station ID</label>
+                        <input type="text" id="addStationId" name="stationId" required 
+                               placeholder="e.g., PS03" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="stationName">Station Name</label>
+                        <input type="text" id="stationName" name="name" required 
+                               placeholder="e.g., Central Primary School" maxlength="50">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="districtSelect">District</label>
+                        <select id="districtSelect" required>
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="constituencySelect">Constituency</label>
+                        <select id="constituencySelect" required disabled>
+                            <option value="">Select Constituency</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="wardSelect">Ward</label>
+                    <select id="wardSelect" name="wardId" required disabled>
+                        <option value="">Select Ward</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Add Station</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeStationModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for editing polling station -->
+    <div id="editStationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Edit Polling Station</h3>
+            <form id="editStationForm" class="station-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editStationId">Station ID</label>
+                        <input type="text" id="editStationId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStationName">Station Name</label>
+                        <input type="text" id="editStationName" name="name" required 
+                               placeholder="e.g., Central Primary School" maxlength="50">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editDistrictSelect">District</label>
+                        <select id="editDistrictSelect" required>
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editConstituencySelect">Constituency</label>
+                        <select id="editConstituencySelect" required>
+                            <option value="">Select Constituency</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editWardSelect">Ward</label>
+                    <select id="editWardSelect" name="wardId" required>
+                        <option value="">Select Ward</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update Station</button>
+                    <button type="button" id="deleteStationBtn" class="btn btn-danger">Delete Station</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditStationModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding new voter -->
+    <div id="addVoterModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Register New Voter</h3>
+            <form id="addVoterForm" class="voter-form">
+                <div class="form-group">
+                    <label for="newNationalId">National ID</label>
+                    <input type="text" id="newNationalId" required>
+                </div>
+                <div class="form-group">
+                    <label for="newStationId">Polling Station</label>
+                    <select id="newStationId" required>
+                        <option value="">Select Station</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Register Voter</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAddVoterModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- VoterID Lookup Modal -->
+    <div id="voteridLookupModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-search"></i> Account Recovery</h3>
+                <span class="close" onclick="closeVoterIDLookup()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Enter your National ID to retrieve your VoterID or reset your password:</p>
+                <form id="voteridLookupForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="lookupNationalId">National ID</label>
+                        <input type="text" id="lookupNationalId" name="nationalId" placeholder="Enter your National ID" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Find VoterID
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="showPasswordReset()">
+                            <i class="fas fa-key"></i> Reset Password
+                        </button>
+                    </div>
+                </form>
+                <div id="voteridLookupResult" class="lookup-result" style="display: none;">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div id="passwordResetModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Reset Password</h3>
+                <span class="close" onclick="closePasswordReset()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Enter your National ID and new password:</p>
+                <form id="passwordResetForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="resetNationalId">National ID</label>
+                        <input type="text" id="resetNationalId" name="nationalId" placeholder="Enter your National ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="password-input-container">
+                            <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password (min 6 characters)" required>
+                            <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('newPassword')"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="password-input-container">
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
+                            <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('confirmPassword')"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-save"></i> Reset Password
+                    </button>
+                </form>
+                <div id="passwordResetResult" class="lookup-result" style="display: none;">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Administrator Login</h3>
+            <form id="adminLoginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <input type="text" id="adminUsername" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <div class="password-input-container">
+                        <input type="password" id="adminPassword" name="password" required>
+                        <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('adminPassword')"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Login as Admin</button>
+            </form>
+            <div class="auth-footer">
+                <p><strong>Demo Credentials:</strong> Username: admin, Password: admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

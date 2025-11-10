@@ -1,0 +1,100 @@
+1. SELECT 
+    Gender,
+    COUNT(*) as total_count,
+    SUM(CASE WHEN Status = 'Not Registered' THEN 1 ELSE 0 END) as not_registered_count,
+    ROUND((SUM(CASE WHEN Status = 'Not Registered' THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS percentage_not_registered
+FROM eligiblecitizen
+GROUP BY Gender;
+
+
+2.  SELECT 
+    c.CandidateID,
+    c.PositionID,
+    c.ConstituencyID,
+    c.WardID,
+    CONCAT(e.FName, ' ', COALESCE(e.MName, ''), ' ', e.SName) AS WinnerName,
+    COUNT(v.VoteID) AS TotalVotes,
+    p.Title AS PositionTitle,
+    c.PartyName
+FROM Vote v
+JOIN Candidate c ON v.CandidateID = c.CandidateID
+JOIN EligibleCitizen e ON c.NationalID = e.NationalID
+JOIN Positions p ON v.PositionID = p.PositionID
+GROUP BY c.CandidateID, c.PositionID, c.ConstituencyID, c.WardID
+HAVING COUNT(v.VoteID) = (
+    SELECT MAX(vcount)
+    FROM (
+        SELECT COUNT(*) AS vcount
+        FROM Vote v2
+        JOIN Candidate c2 ON v2.CandidateID = c2.CandidateID
+        WHERE v2.PositionID = v.PositionID
+        AND (
+            (v.PositionID = 'PRES')
+            OR (v.PositionID = 'MP' AND c2.ConstituencyID = c.ConstituencyID)
+            OR (v.PositionID = 'COUNC' AND c2.WardID = c.WardID)
+        )
+        GROUP BY v2.CandidateID
+    ) AS sub
+)
+ORDER BY FIELD(c.PositionID, 'PRES', 'MP', 'COUNC'),
+         c.ConstituencyID,
+         c.WardID,
+         TotalVotes DESC;
+
+
+
+
+3.  SELECT 
+  ROUND(SUM(CASE WHEN ec.Status = 'Not Registered' THEN 1 ELSE 0 END) * 100.0 / COUNT(ec.NationalID), 2) AS PercentageNotRegistered
+FROM eligiblecitizen ec
+JOIN candidate c ON ec.NationalID = c.NationalID;
+ 
+
+
+4.  WITH DuplicateVotes AS (
+    SELECT VoterID, PositionID
+    FROM vote
+    GROUP BY VoterID, PositionID
+    HAVING COUNT(*) > 1
+)
+SELECT 
+    COALESCE(w.WardID, 'UNKNOWN') AS WardID,
+    COALESCE(w.Name, '') AS WardName,
+    COUNT(*) AS TotalVotes,
+    SUM(CASE WHEN v.CandidateID = 0 OR d.VoterID IS NOT NULL THEN 1 ELSE 0 END) AS NullVoidVotes,
+    ROUND(100.0 * SUM(CASE WHEN v.CandidateID = 0 OR d.VoterID IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 2) AS Percentage
+FROM vote v
+LEFT JOIN DuplicateVotes d ON v.VoterID = d.VoterID AND v.PositionID = d.PositionID
+LEFT JOIN Voter vt ON v.VoterID = vt.VoterID
+LEFT JOIN PollingStation ps ON vt.StationID = ps.StationID
+LEFT JOIN Ward w ON ps.WardID = w.WardID
+GROUP BY w.WardID, w.Name
+HAVING SUM(CASE WHEN v.CandidateID = 0 OR d.VoterID IS NOT NULL THEN 1 ELSE 0 END) > 0
+ORDER BY Percentage DESC;
+
+
+5.  SELECT 
+    v_g.VoterGender,
+    CONCAT(ROUND(
+        100.0 * SUM(CASE 
+                       WHEN v_g.VoterGender = c_g.CandidateGender 
+                       THEN 1 ELSE 0 END) / COUNT(*)
+    ,2), '%') AS PercentageAlignedVotes
+FROM (
+    -- voter gender
+    SELECT vt.VoteID, vt.CandidateID, e.Gender AS VoterGender
+    FROM vote vt
+    JOIN voter vr ON vt.VoterID = vr.VoterID
+    JOIN eligiblecitizen e ON vr.NationalID = e.NationalID
+) v_g
+JOIN (
+    -- candidate gender
+    SELECT c.CandidateID, e.Gender AS CandidateGender
+    FROM candidate c
+    JOIN eligiblecitizen e ON c.NationalID = e.NationalID
+) c_g ON v_g.CandidateID = c_g.CandidateID
+GROUP BY v_g.VoterGender;
+
+
+
+select * from voter v JOIN eligiblecitizen ec ON ec.NationalID = v.NationalID limit 10;

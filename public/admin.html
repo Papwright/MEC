@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malawi Elections Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Layout */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Consolidated scrollbar styles */
+        .admin-sidebar, .admin-content {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .admin-sidebar {
+            background: var(--primary-color);
+        }
+        
+        /* Blue theme scrollbar for sidebar */
+        .admin-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .admin-sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        
+        .admin-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .admin-content {
+            background: var(--bg-color);
+            padding: 2rem;
+            position: relative;
+        }
+        
+        /* Light theme scrollbar for content */
+        .admin-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .admin-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .admin-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .admin-content::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .admin-sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-brand img {
+            width: 50px;
+            height: 32px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .sidebar-brand h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+        
+        .sidebar-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        .sidebar-nav {
+            padding: 1rem 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+        
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 1.5rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.7;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-item:hover::before,
+        .nav-item.active::before {
+            transform: translateX(0);
+        }
+        
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 1rem;
+            width: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .nav-item span {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .nav-badge {
+            background: var(--warning-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            margin-left: auto;
+            font-weight: 700;
+        }
+        
+        .admin-main {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-title h2 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .admin-content {
+            flex: 1;
+            padding: 2rem;
+            background: var(--light-color);
+        }
+        
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Dashboard Overview Cards */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .overview-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .overview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transition: var(--transition);
+        }
+        
+        .overview-card:nth-child(2)::before { background: var(--gradient-success); }
+        .overview-card:nth-child(3)::before { background: var(--gradient-secondary); }
+        .overview-card:nth-child(4)::before { background: linear-gradient(135deg, #f59e0b, #f97316); }
+        
+        .overview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: var(--gradient-primary);
+        }
+        
+        .overview-card:nth-child(2) .card-icon { background: var(--gradient-success); }
+        .overview-card:nth-child(3) .card-icon { background: var(--gradient-secondary); }
+        .overview-card:nth-child(4) .card-icon { background: linear-gradient(135deg, #f59e0b, #f97316); }
+        
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .card-label {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .card-change.positive { color: var(--success-color); }
+        .card-change.negative { color: var(--danger-color); }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .action-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        
+        .table-container tr:hover {
+            background: var(--light-color);
+        }
+        
+        /* Prevent horizontal overflow in content */
+        .admin-content * {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Data Tables */
+        .data-section {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* Consolidated section actions */
+        .section-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .section-actions select {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            table-layout: fixed;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80px;
+        }
+        
+        .data-table th {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .content-section {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* Loading States */
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        
+        .loading-state i {
+            margin-right: 1rem;
+            animation: spin 1s linear infinite;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-sidebar {
+                display: block;
+                position: fixed;
+                left: 0; top: 0; bottom: 0; width: 280px;
+                transform: translateX(-100%);
+                transition: transform .3s ease;
+                z-index: 1000;
+            }
+            body.sidebar-open .admin-sidebar { transform: translateX(0); }
+            .admin-header .hamburger { display: inline-flex; }
+            .admin-content {
+                padding: 1rem;
+            }
+            
+            .overview-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .admin-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+            
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="/Malawi/Flag-Malawi.webp" alt="Malawi Flag">
+                    <div>
+                        <h1>Malawi Elections</h1>
+                        <div class="sidebar-subtitle">Management System</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Overview</div>
+                    <a href="#" class="nav-item active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="status">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>System Status</span>
+                        <span class="nav-badge">Live</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Election Data</div>
+                    <a href="#" class="nav-item" data-section="results">
+                        <i class="fas fa-poll"></i>
+                        <span>Live Results</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="summary">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Summary</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="charts">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Election Charts</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics Overview</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="#" class="nav-item" data-section="voters">
+                        <i class="fas fa-users"></i>
+                        <span>Voters</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="candidates">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Candidates</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="reports">
+                        <i class="fas fa-file-export"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Data Tables</div>
+                    <a href="#" class="nav-item" data-section="elections">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Elections</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="districts">
+                        <i class="fas fa-map"></i>
+                        <span>Districts</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="constituencies">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>Constituencies</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="wards">
+                        <i class="fas fa-map-pin"></i>
+                        <span>Wards</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="polling-stations">
+                        <i class="fas fa-building"></i>
+                        <span>Polling Stations</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="political-parties">
+                        <i class="fas fa-flag"></i>
+                        <span>Political Parties</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="eligible-citizens">
+                        <i class="fas fa-id-card"></i>
+                        <span>Eligible Citizens</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="positions">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Positions</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="votes">
+                        <i class="fas fa-vote-yea"></i>
+                        <span>Votes</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="final-winners">
+                        <i class="fas fa-crown"></i>
+                        <span>Final Winners</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="running-mates">
+                        <i class="fas fa-user-friends"></i>
+                        <span>Running Mates</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="election-officials">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Election Officials</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="party-agents">
+                        <i class="fas fa-user-tag"></i>
+                        <span>Party Agents</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="ballots">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Ballots</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="logistics">
+                        <i class="fas fa-truck"></i>
+                        <span>Logistics</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="incidents">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Incidents</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-title">
+                    <button class="hamburger menu-button-reset hide" id="sidebarToggle" title="Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 id="pageTitle">Dashboard</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <div class="admin-content">
+                <!-- Dashboard Section -->
+                <div class="content-section active" id="dashboard">
+                    <div class="overview-grid">
+                        <div class="overview-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="card-value" id="totalVoters">-</div>
+                            <div class="card-label">Total Voters</div>
+                            <div class="card-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Active</span>
+                            </div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                            </div>
+                            <div class="card-value" id="totalCandidates">-</div>
+                            <div class="card-label">Candidates</div>
+                            <div class="card-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Registered</span>
+                            </div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-vote-yea"></i>
+                                </div>
+                            </div>
+                            <div class="card-value" id="totalVotes">-</div>
+                            <div class="card-label">Total Votes</div>
+                            <div class="card-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Live</span>
+                            </div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                            </div>
+                            <div class="card-value" id="totalDistricts">-</div>
+                            <div class="card-label">Districts</div>
+                            <div class="card-change positive">
+                                <i class="fas fa-check"></i>
+                                <span>Covered</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <div class="action-card" data-action="refresh">
+                            <div class="action-icon">
+                                <i class="fas fa-sync-alt"></i>
+                            </div>
+                            <div class="action-title">Refresh Data</div>
+                            <div class="action-desc">Update all election data</div>
+                        </div>
+                        
+                        <div class="action-card" data-action="export">
+                            <div class="action-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="action-title">Export Results</div>
+                            <div class="action-desc">Download CSV files</div>
+                        </div>
+                        
+                        <div class="action-card" data-action="status">
+                            <div class="action-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="action-title">System Health</div>
+                            <div class="action-desc">Check system status</div>
+                        </div>
+                        
+                        <div class="action-card" data-action="reports">
+                            <div class="action-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="action-title">Generate Reports</div>
+                            <div class="action-desc">Create analytics</div>
+                        </div>
+                        
+                        <button class="btn" id="loadDashboard"><i class="fas fa-database"></i> Load Dashboard</button>
+                    </div>
+                </div>
+                
+                <!-- Status Section -->
+                <div class="content-section" id="status">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-heartbeat"></i>
+                                System Health Monitor
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="refreshStatus"><i class="fas fa-sync"></i> Refresh</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="statusLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Checking system status...
+                        </div>
+                        <div id="statusContent" class="hide">
+                            <!-- Status content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div class="content-section" id="results">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-poll"></i>
+                                Live Election Results
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn btn-primary" onclick="adminManager.loadResults()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading live results...
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Summary Section -->
+                <div class="content-section" id="summary">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-chart-pie"></i>
+                                Election Summary
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="refreshSummary"><i class="fas fa-sync"></i> Refresh</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="summaryLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading summary...
+                        </div>
+                        <div id="summaryContent" class="hide">
+                            <!-- Summary content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="content-section" id="charts">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-chart-bar"></i>
+                                Election Charts
+                            </h3>
+                            <div class="section-actions">
+                                <select id="chartTypeFilter" class="btn btn-outline">
+                                    <option value="all">All Positions</option>
+                                    <option value="PRES">President</option>
+                                    <option value="MP">Member of Parliament</option>
+                                    <option value="COUNC">Councillor</option>
+                                </select>
+                                <button class="btn btn-primary" onclick="adminManager.loadCharts()">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Refresh Charts
+                                </button>
+                            </div>
+                        </div>
+                        <div class="charts-container">
+                            <div class="chart-row">
+                                <div class="chart-item">
+                                    <h3 id="mainChartTitle">Election Results</h3>
+                                    <canvas id="mainChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-row">
+                                <div class="chart-item">
+                                    <h3>Vote Turnout by Position</h3>
+                                    <canvas id="turnoutChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analytics Section -->
+                <div class="content-section" id="analytics">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-chart-line"></i>
+                                Analytics Overview
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="loadAnalytics"><i class="fas fa-database"></i> Load Analytics</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="analyticsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading analytics...
+                        </div>
+                        <div id="analyticsContent" class="hide">
+                            <!-- Analytics content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Voters Section -->
+                <div class="content-section" id="voters">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-users"></i>
+                                Voter Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addVoterBtn">
+                                    <i class="fas fa-plus"></i> Add Voter
+                                </button>
+                                <button class="btn" id="loadVoters"><i class="fas fa-database"></i> Load Voters</button>
+                            </div>
+                        </div>
+                        <!-- Loading states removed for dashboard tables -->
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addCandidateBtn">
+                                    <i class="fas fa-plus"></i> Add Candidate
+                                </button>
+                                <button class="btn" id="loadCandidates"><i class="fas fa-database"></i> Load Candidates</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="candidatesLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading candidates...
+                        </div>
+                        <div id="candidatesContent" class="hide">
+                            <!-- Candidates content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reports Section -->
+                <div class="content-section" id="reports">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-export"></i>
+                                Reports & Analytics
+                            </h3>
+                        </div>
+                        <div class="quick-actions">
+                            <div class="action-card" data-action="exportVoters">
+                                <div class="action-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="action-title">Export Voters</div>
+                                <div class="action-desc">Download voter data</div>
+                            </div>
+                            
+                            <div class="action-card" data-action="exportCandidates">
+                                <div class="action-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="action-title">Export Candidates</div>
+                                <div class="action-desc">Download candidate data</div>
+                            </div>
+                            
+                            <div class="action-card" data-action="exportResults">
+                                <div class="action-icon">
+                                    <i class="fas fa-poll"></i>
+                                </div>
+                                <div class="action-title">Export Results</div>
+                                <div class="action-desc">Download results data</div>
+                            </div>
+                            
+                            <div class="action-card" data-action="exportAll">
+                                <div class="action-icon">
+                                    <i class="fas fa-download"></i>
+                                </div>
+                                <div class="action-title">Export All Data</div>
+                                <div class="action-desc">Complete data export</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Elections Section -->
+                <div class="content-section" id="elections">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-calendar-alt"></i>
+                                Election Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addElectionBtn">
+                                    <i class="fas fa-plus"></i> Add Election
+                                </button>
+                                <button class="btn" id="loadElections"><i class="fas fa-database"></i> Load Elections</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="electionsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading elections...
+                        </div>
+                        <div id="electionsContent" class="hide">
+                            <!-- Elections content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Districts Section -->
+                <div class="content-section" id="districts">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-map"></i>
+                                District Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addDistrictBtn">
+                                    <i class="fas fa-plus"></i> Add District
+                                </button>
+                                <button class="btn" id="loadDistricts"><i class="fas fa-database"></i> Load Districts</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="districtsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading districts...
+                        </div>
+                        <div id="districtsContent" class="hide">
+                            <!-- Districts content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Constituencies Section -->
+                <div class="content-section" id="constituencies">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-map-marked-alt"></i>
+                                Constituency Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addConstituencyBtn">
+                                    <i class="fas fa-plus"></i> Add Constituency
+                                </button>
+                                <button class="btn" id="loadConstituencies"><i class="fas fa-database"></i> Load Constituencies</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="constituenciesLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading constituencies...
+                        </div>
+                        <div id="constituenciesContent" class="hide">
+                            <!-- Constituencies content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wards Section -->
+                <div class="content-section" id="wards">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-map-pin"></i>
+                                Ward Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addWardBtn">
+                                    <i class="fas fa-plus"></i> Add Ward
+                                </button>
+                                <button class="btn" id="loadWards"><i class="fas fa-database"></i> Load Wards</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="wardsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading wards...
+                        </div>
+                        <div id="wardsContent" class="hide">
+                            <!-- Wards content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Polling Stations Section -->
+                <div class="content-section" id="polling-stations">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-building"></i>
+                                Polling Station Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addPollingStationBtn">
+                                    <i class="fas fa-plus"></i> Add Polling Station
+                                </button>
+                                <button class="btn" id="loadPollingStations"><i class="fas fa-database"></i> Load Polling Stations</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="pollingStationsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading polling stations...
+                        </div>
+                        <div id="pollingStationsContent" class="hide">
+                            <!-- Polling stations content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Political Parties Section -->
+                <div class="content-section" id="political-parties">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-flag"></i>
+                                Political Party Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addPoliticalPartyBtn">
+                                    <i class="fas fa-plus"></i> Add Political Party
+                                </button>
+                                <button class="btn" id="loadPoliticalParties"><i class="fas fa-database"></i> Load Political Parties</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="politicalPartiesLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading political parties...
+                        </div>
+                        <div id="politicalPartiesContent" class="hide">
+                            <!-- Political parties content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eligible Citizens Section -->
+                <div class="content-section" id="eligible-citizens">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-id-card"></i>
+                                Eligible Citizen Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addEligibleCitizenBtn">
+                                    <i class="fas fa-plus"></i> Add Eligible Citizen
+                                </button>
+                                <button class="btn" id="loadEligibleCitizens"><i class="fas fa-database"></i> Load Eligible Citizens</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="eligibleCitizensLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading eligible citizens...
+                        </div>
+                        <div id="eligibleCitizensContent" class="hide">
+                            <!-- Eligible citizens content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voters Section -->
+                <div class="content-section" id="voters">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-users"></i>
+                                Voter Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addVoterBtn">
+                                    <i class="fas fa-plus"></i> Add Voter
+                                </button>
+                                <button class="btn" id="loadVoters"><i class="fas fa-database"></i> Load Voters</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="votersLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading voters...
+                        </div>
+                        <div id="votersContent" class="hide">
+                            <!-- Voters content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Positions Section -->
+                <div class="content-section" id="positions">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-briefcase"></i>
+                                Position Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addPositionBtn">
+                                    <i class="fas fa-plus"></i> Add Position
+                                </button>
+                                <button class="btn" id="loadPositions"><i class="fas fa-database"></i> Load Positions</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="positionsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading positions...
+                        </div>
+                        <div id="positionsContent" class="hide">
+                            <!-- Positions content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidates Section -->
+                <div class="content-section" id="candidates">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-tie"></i>
+                                Candidate Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addCandidateBtn">
+                                    <i class="fas fa-plus"></i> Add Candidate
+                                </button>
+                                <button class="btn" id="loadCandidates"><i class="fas fa-database"></i> Load Candidates</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="candidatesLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading candidates...
+                        </div>
+                        <div id="candidatesContent" class="hide">
+                            <!-- Candidates content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="content-section" id="results">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-poll"></i>
+                                Results Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addResultBtn">
+                                    <i class="fas fa-plus"></i> Add Result
+                                </button>
+                                <button class="btn" id="loadResults"><i class="fas fa-database"></i> Load Results</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="resultsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading results...
+                        </div>
+                        <div id="resultsContent" class="hide">
+                            <!-- Results content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Votes Section -->
+                <div class="content-section" id="votes">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-vote-yea"></i>
+                                Vote Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addVoteBtn">
+                                    <i class="fas fa-plus"></i> Add Vote
+                                </button>
+                                <button class="btn" id="loadVotes"><i class="fas fa-database"></i> Load Votes</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="votesLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading votes...
+                        </div>
+                        <div id="votesContent" class="hide">
+                            <!-- Votes content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Winners Section -->
+                <div class="content-section" id="final-winners">
+                    <div class="data-section">
+                        <div class="section-header" style="margin-bottom: 1.5rem;">
+                            <h3 class="section-title">
+                                <i class="fas fa-trophy"></i>
+                                Final Winners
+                            </h3>
+                            <div class="filter-bar">
+                                <input type="text" id="winnerSearchInput" class="filter-input" placeholder="Search by name, position, party...">
+                                <select id="finalWinnersPositionFilter" class="filter-select">
+                                    <option value="">All Positions</option>
+                                    <option value="PRES">President</option>
+                                    <option value="MP">Member of Parliament</option>
+                                    <option value="COUNC">Councillor</option>
+                                </select>
+                                <button id="clearFilters" class="filter-btn">
+                                    <i class="fas fa-times"></i> Clear
+                                </button>
+                                <button id="saveWinnersBtn" class="filter-btn" style="background: #16a34a; margin-left: 10px;">
+                                    <i class="fas fa-save"></i> Calculate & Save Winners
+                                </button>
+                            </div>
+                        </div>
+                        <div id="finalWinnersContent">
+                            <div class="winners-grid">
+                                <!-- Final winners content will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Running Mates Section -->
+                <div class="content-section" id="running-mates">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-friends"></i>
+                                Running Mates Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addRunningMateBtn">
+                                    <i class="fas fa-plus"></i> Add Running Mate
+                                </button>
+                                <button class="btn" id="loadRunningMates"><i class="fas fa-database"></i> Load Running Mates</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="runningMatesLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading running mates...
+                        </div>
+                        <div id="runningMatesContent" class="hide">
+                            <!-- Running mates content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Election Officials Section -->
+                <div class="content-section" id="election-officials">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-shield"></i>
+                                Election Officials Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addElectionOfficialBtn">
+                                    <i class="fas fa-plus"></i> Add Election Official
+                                </button>
+                                <button class="btn" id="loadElectionOfficials"><i class="fas fa-database"></i> Load Election Officials</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="electionOfficialsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading election officials...
+                        </div>
+                        <div id="electionOfficialsContent" class="hide">
+                            <!-- Election officials content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Party Agents Section -->
+                <div class="content-section" id="party-agents">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-user-tag"></i>
+                                Party Agents Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addPartyAgentBtn">
+                                    <i class="fas fa-plus"></i> Add Party Agent
+                                </button>
+                                <button class="btn" id="loadPartyAgents"><i class="fas fa-database"></i> Load Party Agents</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="partyAgentsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading party agents...
+                        </div>
+                        <div id="partyAgentsContent" class="hide">
+                            <!-- Party agents content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ballots Section -->
+                <div class="content-section" id="ballots">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-file-alt"></i>
+                                Ballots Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addBallotBtn">
+                                    <i class="fas fa-plus"></i> Add Ballot
+                                </button>
+                                <button class="btn" id="loadBallots"><i class="fas fa-database"></i> Load Ballots</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="ballotsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading ballots...
+                        </div>
+                        <div id="ballotsContent" class="hide">
+                            <!-- Ballots content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logistics Section -->
+                <div class="content-section" id="logistics">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-truck"></i>
+                                Logistics Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addLogisticsBtn">
+                                    <i class="fas fa-plus"></i> Add Logistics Item
+                                </button>
+                                <button class="btn" id="loadLogistics"><i class="fas fa-database"></i> Load Logistics</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="logisticsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading logistics...
+                        </div>
+                        <div id="logisticsContent" class="hide">
+                            <!-- Logistics content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Incidents Section -->
+                <div class="content-section" id="incidents">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Incidents Management
+                            </h3>
+                            <div class="section-actions">
+                                <button class="btn" id="addIncidentBtn">
+                                    <i class="fas fa-plus"></i> Add Incident
+                                </button>
+                                <button class="btn" id="loadIncidents"><i class="fas fa-database"></i> Load Incidents</button>
+                            </div>
+                        </div>
+                        <div class="loading-state" id="incidentsLoading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading incidents...
+                        </div>
+                        <div id="incidentsContent" class="hide">
+                            <!-- Incidents content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div class="content-section" id="analytics"></div>
+
+                <!-- Charts Section -->
+                <div class="content-section" id="charts">
+                    <div class="data-section">
+                        <div class="section-header">
+                            <h3 class="section-title">
+                                <i class="fas fa-chart-bar"></i>
+                                Election Results Visualization
+                            </h3>
+                            <div class="section-actions">
+                                <select id="chartTypeFilter" class="btn btn-outline">
+                                    <option value="all">All Positions</option>
+                                    <option value="PRES">President</option>
+                                    <option value="MP">Member of Parliament</option>
+                                    <option value="COUNC">Councillor</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="charts-container">
+                            <div class="chart-row">
+                                <div class="chart-item">
+                                    <h3 id="mainChartTitle">Election Results</h3>
+                                    <canvas id="mainChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-row">
+                                <div class="chart-item">
+                                    <h3>Vote Turnout by Position</h3>
+                                    <canvas id="turnoutChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+    <!-- Modals will be added here -->
+    <div id="modalContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/enhanced-admin-clean.js"></script>
+</body>
+</html>
