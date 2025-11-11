@@ -17,13 +17,6 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Flag_of_Malawi.svg" alt="Malawi Flag" class="flag">
                 <h1>Malawi Elections</h1>
             </div>
-            
-            <!-- Mobile Menu Toggle -->
-            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
 
             <!-- Navigation -->
             <nav class="nav" id="mainNav">
@@ -568,52 +561,6 @@
         </div>
     </div>
 
-    <script>
-        // Mobile Menu Toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const mainNav = document.getElementById('mainNav');
-            
-            console.log('Mobile menu toggle:', mobileMenuToggle);
-            console.log('Main nav:', mainNav);
-            
-            if (mobileMenuToggle && mainNav) {
-                mobileMenuToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    console.log('Toggle clicked!');
-                    this.classList.toggle('active');
-                    mainNav.classList.toggle('active');
-                    document.body.classList.toggle('menu-open');
-                    
-                    console.log('Nav classes:', mainNav.className);
-                    console.log('Body classes:', document.body.className);
-                });
-
-                // Close menu when clicking nav buttons
-                const navButtons = document.querySelectorAll('.nav-btn');
-                navButtons.forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        mobileMenuToggle.classList.remove('active');
-                        mainNav.classList.remove('active');
-                        document.body.classList.remove('menu-open');
-                    });
-                });
-
-                // Close menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    const isClickInside = mainNav.contains(event.target) || mobileMenuToggle.contains(event.target);
-                    if (!isClickInside && mainNav.classList.contains('active')) {
-                        mobileMenuToggle.classList.remove('active');
-                        mainNav.classList.remove('active');
-                        document.body.classList.remove('menu-open');
-                    }
-                });
-            } else {
-                console.error('Mobile menu elements not found!');
-            }
-        });
     </script>
     <script src="script.js"></script>
 </body>
