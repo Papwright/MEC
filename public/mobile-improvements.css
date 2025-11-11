@@ -156,10 +156,10 @@
 
 /* Responsive Breakpoints */
 
-/* Small phones */
-@media (max-width: 480px) {
+/* Mobile devices - Tablets and phones */
+@media (max-width: 768px) {
     .header-container {
-        padding: 0.75rem;
+        padding: 0.75rem 1rem;
     }
     
     .logo h1 {
@@ -167,14 +167,15 @@
     }
     
     .logo .flag {
-        width: 32px;
+        width: 35px;
     }
     
-    /* Stack navigation for very small screens */
+    /* Show hamburger menu on mobile */
     .mobile-menu-toggle {
         display: flex;
     }
     
+    /* Slide-in navigation menu */
     .nav {
         position: fixed;
         top: 0;
@@ -184,8 +185,8 @@
         background: var(--primary-color);
         flex-direction: column;
         padding: 5rem 1.5rem 1.5rem;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-        transition: left 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        transition: left 0.3s ease-in-out;
         z-index: 1000;
         overflow-y: auto;
     }
@@ -199,6 +200,7 @@
         justify-content: flex-start;
         padding: 1rem 1.25rem;
         font-size: 1rem;
+        border-radius: 8px;
     }
     
     .nav-btn i {
@@ -206,10 +208,12 @@
         width: 24px;
     }
     
+    /* Prevent body scroll when menu is open */
     body.menu-open {
         overflow: hidden;
     }
     
+    /* Dark overlay when menu is open */
     body.menu-open::before {
         content: '';
         position: fixed;
@@ -219,6 +223,40 @@
         bottom: 0;
         background: rgba(0,0,0,0.5);
         z-index: 999;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .user-section {
+        gap: 0.4rem;
+    }
+    
+    .user-name {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 480px) {
+    .header-container {
+        padding: 0.75rem;
+    }
+    
+    .logo h1 {
+        font-size: 1rem;
+    }
+    
+    .logo .flag {
+        width: 30px;
+    }
+    
+    .nav {
+        width: 260px;
     }
     
     .user-section {
@@ -227,8 +265,8 @@
     }
     
     .login-buttons {
-        flex-direction: column;
-        width: auto;
+        flex-direction: row;
+        gap: 0.3rem;
     }
     
     .btn-sm span {
@@ -240,52 +278,9 @@
         min-width: 40px;
         justify-content: center;
     }
-}
-
-/* Tablets */
-@media (min-width: 481px) and (max-width: 768px) {
-    .mobile-menu-toggle {
-        display: flex;
-    }
-    
-    .nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 320px;
-        height: 100vh;
-        background: var(--primary-color);
-        flex-direction: column;
-        padding: 5rem 2rem 2rem;
-        box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-        transition: right 0.3s ease;
-        z-index: 1000;
-    }
-    
-    .nav.active {
-        right: 0;
-    }
-    
-    .nav-btn {
-        width: 100%;
-        justify-content: flex-start;
-        padding: 1rem 1.5rem;
-        font-size: 1.05rem;
-    }
-    
-    body.menu-open::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 999;
-    }
     
     .user-name {
-        display: inline-block;
+        display: none;
     }
 }
 
