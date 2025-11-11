@@ -174,8 +174,17 @@ class ElectionServer {
         this.app.get('/admin', this.serveAuthenticatedPage('admin'));
         this.app.get('/status', this.serveAuthenticatedPage('admin'));
 
-        // Static files
-        this.app.use(express.static(path.join(__dirname, 'public'), { index: false }));
+        // Static files with no-cache headers
+        this.app.use(express.static(path.join(__dirname, 'public'), { 
+            index: false,
+            setHeaders: (res, path) => {
+                if (path.endsWith('.css') || path.endsWith('.js')) {
+                    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+                    res.setHeader('Pragma', 'no-cache');
+                    res.setHeader('Expires', '0');
+                }
+            }
+        }));
 
         // Malawi assets
         this.serveMalawiAssets();
