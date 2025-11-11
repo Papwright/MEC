@@ -174,40 +174,45 @@
     
     /* Show hamburger menu on mobile */
     .mobile-menu-toggle {
-        display: flex;
+        display: flex !important;
     }
     
     /* Slide-in navigation menu */
     .nav {
-        position: fixed;
-        top: 0;
-        left: -100%;
-        width: 280px;
-        height: 100vh;
-        background: #1e3a8a; /* Fallback for var(--primary-color) */
-        background: var(--primary-color, #1e3a8a);
-        flex-direction: column;
-        padding: 5rem 1.5rem 1.5rem;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-        transition: left 0.3s ease-in-out;
-        z-index: 100000; /* Much higher to ensure it's above everything */
-        overflow-y: auto;
+        position: fixed !important;
+        top: 0 !important;
+        left: -100% !important;
+        width: 280px !important;
+        height: 100vh !important;
+        background: #1e3a8a !important; /* Fallback for var(--primary-color) */
+        flex-direction: column !important;
+        padding: 5rem 1.5rem 1.5rem !important;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5) !important;
+        transition: left 0.3s ease-in-out !important;
+        z-index: 100000 !important; /* Much higher to ensure it's above everything */
+        overflow-y: auto !important;
+        display: flex !important;
+        gap: 0.5rem !important;
     }
     
     .nav.active {
         left: 0 !important;
+        border-right: 5px solid red !important; /* Temporary debug border */
     }
     
     .nav-btn {
-        width: 100%;
-        justify-content: flex-start;
-        padding: 1rem 1.25rem;
-        font-size: 1rem;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.1) !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+        padding: 1rem 1.25rem !important;
+        font-size: 1.1rem !important;
+        border-radius: 8px !important;
+        background: rgba(255,255,255,0.15) !important;
         color: white !important;
-        border: 2px solid transparent !important;
-        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255,255,255,0.3) !important;
+        margin-bottom: 0.5rem !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
     }
     
     .nav-btn:hover {

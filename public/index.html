@@ -574,11 +574,21 @@
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const mainNav = document.getElementById('mainNav');
             
-            if (mobileMenuToggle) {
-                mobileMenuToggle.addEventListener('click', function() {
+            console.log('Mobile menu toggle:', mobileMenuToggle);
+            console.log('Main nav:', mainNav);
+            
+            if (mobileMenuToggle && mainNav) {
+                mobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Toggle clicked!');
                     this.classList.toggle('active');
                     mainNav.classList.toggle('active');
                     document.body.classList.toggle('menu-open');
+                    
+                    console.log('Nav classes:', mainNav.className);
+                    console.log('Body classes:', document.body.className);
                 });
 
                 // Close menu when clicking nav buttons
@@ -600,6 +610,8 @@
                         document.body.classList.remove('menu-open');
                     }
                 });
+            } else {
+                console.error('Mobile menu elements not found!');
             }
         });
     </script>
