@@ -13,7 +13,7 @@
     border: none;
     cursor: pointer;
     padding: 0.5rem;
-    z-index: 10001;
+    z-index: 100001;
     position: relative;
 }
 
@@ -24,6 +24,7 @@
     border-radius: 10px;
     transition: all 0.3s ease;
     transform-origin: center;
+    display: block;
 }
 
 .mobile-menu-toggle.active span:nth-child(1) {
@@ -183,17 +184,18 @@
         left: -100%;
         width: 280px;
         height: 100vh;
-        background: var(--primary-color);
+        background: #1e3a8a; /* Fallback for var(--primary-color) */
+        background: var(--primary-color, #1e3a8a);
         flex-direction: column;
         padding: 5rem 1.5rem 1.5rem;
         box-shadow: 2px 0 10px rgba(0,0,0,0.3);
         transition: left 0.3s ease-in-out;
-        z-index: 10000;
+        z-index: 100000; /* Much higher to ensure it's above everything */
         overflow-y: auto;
     }
     
     .nav.active {
-        left: 0;
+        left: 0 !important;
     }
     
     .nav-btn {
@@ -202,11 +204,28 @@
         padding: 1rem 1.25rem;
         font-size: 1rem;
         border-radius: 8px;
+        background: rgba(255,255,255,0.1) !important;
+        color: white !important;
+        border: 2px solid transparent !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .nav-btn:hover {
+        background: rgba(255,255,255,0.2) !important;
+    }
+    
+    .nav-btn.active {
+        background: white !important;
+        color: #1e3a8a !important;
     }
     
     .nav-btn i {
         font-size: 1.25rem;
         width: 24px;
+    }
+    
+    .nav-btn span {
+        display: inline !important;
     }
     
     /* Prevent body scroll when menu is open */
@@ -223,7 +242,7 @@
         right: 0;
         bottom: 0;
         background: rgba(0,0,0,0.5);
-        z-index: 9999;
+        z-index: 99999;
         animation: fadeIn 0.3s ease;
     }
     
